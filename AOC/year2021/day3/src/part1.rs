@@ -10,7 +10,7 @@ fn main() {
         for char in line.chars() {
             row.push(char);
         }
-        let pushrow = row
+        let mut pushrow = row
             .iter()
             .map(|c| *c as i32)
             .map(|c| { c - 48 })
@@ -18,53 +18,40 @@ fn main() {
 
         gamma.push(pushrow.clone());
 
-        for mut num in 0..pushrow.len() {
+        for num in 0..pushrow.len() {
             if num == 0 {
-                let _ = replace(&mut num, 1);
+                let _ = replace(&mut pushrow[num], 1);
             } else {
-                let _ = replace(&mut num, 0);
+                let _ = replace(&mut pushrow[num], 0);
             }
         }
         epsilon.push(pushrow.clone());
     }
 
-    let gamma_f = create_2d_vec(gamma);
-    let gamma_b = gamma_f
-        .iter()
-        .map(|c| amt_to_bin(*c))
-        .collect::<Vec<i32>>();
+    let (gamma_f, epsilon_f) = two_to_one_dimension(gamma.clone());
 
-    let epsilon_f = create_2d_vec(epsilon);
-    let epsilon_b = epsilon_f
-        .iter()
-        .map(|c| amt_to_bin(*c))
-        .collect::<Vec<i32>>();
-
-    println!("{}", bin_vec_to_dec(gamma_b) * bin_vec_to_dec(epsilon_b));
-
+    println!("{:?} {:?}", bin_to_dec(gamma_f.clone()), bin_to_dec(epsilon_f.clone()));
+    println!("{}", bin_to_dec(gamma_f.clone())* bin_to_dec(epsilon_f.clone()));
 }
 
-fn amt_to_bin(num: i32) -> i32 {
-    let k = (1000 / num)-1;
-    return k
-}
-
-fn bin_vec_to_dec(vector: Vec<i32>) -> i32 {
-    let mut r = 0;
-    for i in 0..vector.len() {
-        r += 2_i32.pow(i as u32) * vector[i];
+fn bin_to_dec(vector: Vec<i32>) -> i32 {
+    let mut r = 0;q
+    for i in 1..(vector.len()+1) {
+        r += 2_i32.pow(i as u32 - 1_u32) * vector[vector.len()-i];
     }
     return r
 }
 
-fn create_2d_vec(vector: Vec::<Vec::<i32>>) -> Vec::<i32> {
-    let mut f = <Vec::<i32>>::new();
+fn two_to_one_dimension(vector: Vec::<Vec::<i32>>) -> (Vec::<i32>, Vec::<i32>) {
+    let mut g = <Vec::<i32>>::new();
+    let mut e = <Vec::<i32>>::new();
     for i in 0..vector[0].len() {
-        let mut gamma_temp = 0;
+        let mut j = 0;
         for row in vector.clone() {
-            gamma_temp += row[i];
+            j += row[i];
         }
-        f.push(gamma_temp);
+        g.push(if j > vector.len() as i32 / 2 { 1 } else { 0 });
+        e.push(if j > vector.len() as i32 / 2 { 0 } else { 1 });
     }
-    return f
+    return (g, e)
 }

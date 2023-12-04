@@ -10,3 +10,4 @@ path = "src/part1.rs"
 
 [dependencies]
 lib = { path = "../../lib" }
+libmath = "0.2.1"
